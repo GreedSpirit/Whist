@@ -73,3 +73,12 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+
+
+# Ignore custom ignored assets
+/Assets/_IgnoredAssets/**
+!/Assets/_IgnoredAssets/**/
+!/Assets/_IgnoredAssets/**/*.meta
+
+/Assets/Firebase/Plugins/x86_64/FirebaseCppApp-13_6_0.bundle
+/Assets/Firebase/Plugins/x86_64/FirebaseCppApp-13_6_0.so
