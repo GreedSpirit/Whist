@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Threading.Tasks;
 using Firebase;
@@ -5,14 +6,15 @@ using Firebase.Auth;
 using Firebase.Database;
 using Firebase.Extensions;
 using UnityEngine;
-
 public class AuthManager : Singleton<AuthManager>
 {
+    public User CurrentUser {get; private set;}
+
     private FirebaseAuth _auth; //파이어베이스 인증 진행을 위한 객체
     private DatabaseReference _databaseReference; //DB에 대한 정보를 불러올 수 있는 객체
 
-    [Header("다음 씬 이름")]
-    [SerializeField] const string lobbySceneName = "LobbyScene";
+    public event Action<bool> OnLoginDone;
+    public event Action<bool> OnRegisterDone;
 
     private void Start()
     {
@@ -88,6 +90,32 @@ public class AuthManager : Singleton<AuthManager>
         else
         {
             FirebaseUser user = LoginTask.Result.User;
+            Debug.Log("로그인 인증 성공, DB 데이터 로드 시도");
+
+            StartCoroutine(LoadUserData(user.UserId));
+        }
+    }
+
+    private IEnumerator LoadUserData(string userId)
+    {
+        Task<DataSnapshot> dbTask = _databaseReference.Child("users").Child(userId).GetValueAsync();
+        yield return new WaitUntil(predicate: () => dbTask.IsCompleted);
+
+        if(dbTask.Exception != null)
+        {
+            Debug.LogError("DB 데이터 로드 실패 : " + dbTask.Exception);
+        }
+        else
+        {
+            // DB에 Json으로 저장했으니 User 객체로 변환 시켜주기
+            DataSnapshot snapshot = dbTask.Result;
+            string json = snapshot.GetRawJsonValue();
+
+            CurrentUser = JsonUtility.FromJson<User>(json);
+
+            Debug.Log($"데이터 로드 완료. 읽어온 닉네임 {CurrentUser.Nickname}");
+
+            OnLoginDone?.Invoke(true);
         }
     }
 
@@ -139,9 +167,10 @@ public class AuthManager : Singleton<AuthManager>
             if (task.IsCompleted)
             {
                 Debug.Log("DB 데이터 생성 성공");
+                CurrentUser = newUser;
+                OnRegisterDone?.Invoke(false);
+                OnLoginDone?.Invoke(true);
             }
         });
     }
-
-
 }

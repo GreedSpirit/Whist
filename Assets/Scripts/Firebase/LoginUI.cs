@@ -1,22 +1,50 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class LoginUI : MonoBehaviour
 {
+    public const string lobbySceneName = "LobbyScene";
+
     [Header ("Input Fields")]
     [SerializeField] private TMP_InputField _emailIDInputField;
     [SerializeField] private TMP_InputField _passwordInputField;
-    [SerializeField] private TMP_InputField _nicknameInputField;
+    [SerializeField] private TMP_InputField _registerEmailIDInputField;
+    [SerializeField] private TMP_InputField _registerPasswordInputField;
+    [SerializeField] private TMP_InputField _registernicknameInputField;
 
     [Header("Buttons")]
-    [SerializeField] Button _loginButton;
-    [SerializeField] Button _registerButton;
+    [SerializeField] private Button _loginButton;
+    [SerializeField] private Button _registerPanelButton;
+    [SerializeField] private Button _gameExitButton;
+    [SerializeField] private Button _registerButton;
+    [SerializeField] private Button _registerpanelExitButton;
+    [SerializeField] private Button _enterButton;
+    [SerializeField] private Button _returnButton;
+
+    [Header("RegisterPanel")]
+    [SerializeField] private GameObject _registerPanel;
+
+    [Header("EnterPanel")]
+    [SerializeField] private GameObject _enterPanel;
+    [SerializeField] private TextMeshProUGUI _nicknameText;
 
     private void Start()
     {
+        AuthManager.Instance.OnLoginDone += EnterPanelActivate;
+        AuthManager.Instance.OnRegisterDone += RegisterPanelActivate;
+
         _loginButton.onClick.AddListener(LoginClick);
+        _registerPanelButton.onClick.AddListener(() => RegisterPanelActivate(true));
+        _gameExitButton.onClick.AddListener(ExitGame);
+
         _registerButton.onClick.AddListener(RegisterClick);
+        _registerpanelExitButton.onClick.AddListener(() => RegisterPanelActivate(false));
+
+        _enterButton.onClick.AddListener(EnterClick);
+        _returnButton.onClick.AddListener(() => EnterPanelActivate(false));
+        
     }
 
     void LoginClick()
@@ -35,9 +63,9 @@ public class LoginUI : MonoBehaviour
 
     void RegisterClick()
     {
-        string email = _emailIDInputField.text;
-        string password = _passwordInputField.text;
-        string nickname = _nicknameInputField.text;
+        string email = _registerEmailIDInputField.text;
+        string password = _registerPasswordInputField.text;
+        string nickname = _registernicknameInputField.text;
 
         if(string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(nickname))
         {
@@ -46,7 +74,45 @@ public class LoginUI : MonoBehaviour
         }
 
         AuthManager.Instance.Register(email, password, nickname);
+
+        _emailIDInputField.text = _registerEmailIDInputField.text;
+        _passwordInputField.text = _registerPasswordInputField.text;
     }
 
+    void RegisterPanelActivate(bool set)
+    {
+        LoginUIActivate(!set);
 
+        _registerPanel.SetActive(set);
+    }
+
+    void LoginUIActivate(bool set)
+    {
+        _emailIDInputField.gameObject.SetActive(set);
+        _passwordInputField.gameObject.SetActive(set);
+        _loginButton.gameObject.SetActive(set);
+        _registerPanelButton.gameObject.SetActive(set);
+    }
+
+    void EnterPanelActivate(bool set)
+    {
+        LoginUIActivate(!set);
+
+        _nicknameText.text = $"{AuthManager.Instance.CurrentUser.Nickname}님 입장하시겠습니다";
+        _enterPanel.SetActive(set);
+    }
+
+    private void EnterClick()
+    {
+        SceneManager.LoadScene(lobbySceneName);
+    }
+
+    private void ExitGame()
+    {
+        #if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+        #else
+        Application.Quit();
+        #endif
+    }
 }
