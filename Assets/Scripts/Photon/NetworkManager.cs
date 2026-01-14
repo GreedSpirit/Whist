@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
@@ -14,6 +15,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public Action<List<RoomInfo>> OnRoomListUpdateAction; // 방 목록 갱신 이벤트
     public Action OnPlayerListUpdateAction; //플레이어 목록 갱신 이벤트
     public Action OnJoinRoomSuccessAction;
+    public Action OnPlayerPropertiesUpdateAction;
 
     private void Awake()
     {
@@ -83,10 +85,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     {
         Debug.Log($"5. 방 참가 성공 : {PhotonNetwork.CurrentRoom.Name}");
 
-        if(PhotonNetwork.CurrentRoom.PlayerCount == maxPlayers)
-        {
-            //TODO 인원이 꽉 찼다면 게임 스타트를 누를 수 있게 만들면 될 듯하다
-        }
+        AssignMySeatNumber();
 
         OnJoinRoomSuccessAction?.Invoke();
         OnPlayerListUpdateAction?.Invoke();
@@ -115,6 +114,11 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         OnPlayerListUpdateAction?.Invoke();
     }
 
+    public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
+    {
+        OnPlayerPropertiesUpdateAction?.Invoke();
+    }
+
     public void LeaveRoom()
     {
         PhotonNetwork.LeaveRoom();
@@ -135,6 +139,40 @@ public class NetworkManager : MonoBehaviourPunCallbacks
                 Debug.LogWarning("4명이 모이지 않아 시작할 수 없습니다.");
                 PhotonNetwork.LoadLevel("InGameScene"); //TODO 테스트를 위해서 일단 4명 아니여도 넘어가도록
             }
+        }
+    }
+
+    void AssignMySeatNumber()
+    {
+        List<int> usedSeats = new List<int>();
+        foreach (Player p in PhotonNetwork.PlayerList)
+        {
+            if(p.IsLocal) continue;
+            if (p.CustomProperties.ContainsKey("SeatNum"))
+            {
+                usedSeats.Add((int)p.CustomProperties["SeatNum"]);
+            }
+        }
+
+        int mySeatIndex = -1;
+        for (int i = 0; i < maxPlayers; i++)
+        {
+            if (!usedSeats.Contains(i))
+            {
+                mySeatIndex = i;
+                break;
+            }
+        }
+
+        if (mySeatIndex != -1)
+        {
+            Hashtable props = new Hashtable() { { "SeatNum", mySeatIndex } };
+            PhotonNetwork.LocalPlayer.SetCustomProperties(props);
+            Debug.Log($"내 자리 배정됨: {mySeatIndex}번");
+        }
+        else
+        {
+            Debug.LogError("자리가 꽉 찼거나 오류 발생");
         }
     }
 
