@@ -34,6 +34,7 @@ public class LoginUI : MonoBehaviour
     {
         AuthManager.Instance.OnLoginDone += EnterPanelActivate;
         AuthManager.Instance.OnRegisterDone += RegisterPanelActivate;
+        AuthManager.Instance.OnRegisterDone += RegisterIFClear;
 
         _loginButton.onClick.AddListener(LoginClick);
         _registerPanelButton.onClick.AddListener(() => RegisterPanelActivate(true));
@@ -41,6 +42,7 @@ public class LoginUI : MonoBehaviour
 
         _registerButton.onClick.AddListener(RegisterClick);
         _registerpanelExitButton.onClick.AddListener(() => RegisterPanelActivate(false));
+        _registerpanelExitButton.onClick.AddListener(() => RegisterIFClear(true));
 
         _enterButton.onClick.AddListener(EnterClick);
         _returnButton.onClick.AddListener(() => EnterPanelActivate(false));
@@ -74,9 +76,6 @@ public class LoginUI : MonoBehaviour
         }
 
         AuthManager.Instance.Register(email, password, nickname);
-
-        _emailIDInputField.text = _registerEmailIDInputField.text;
-        _passwordInputField.text = _registerPasswordInputField.text;
     }
 
     void RegisterPanelActivate(bool set)
@@ -84,6 +83,19 @@ public class LoginUI : MonoBehaviour
         LoginUIActivate(!set);
 
         _registerPanel.SetActive(set);
+    }
+
+    private void RegisterIFClear(bool set)
+    {
+        if (!set)
+        {
+            _emailIDInputField.text = _registerEmailIDInputField.text;
+            _passwordInputField.text = _registerPasswordInputField.text;
+        }
+
+        _registerEmailIDInputField.text = "";
+        _registerPasswordInputField.text = "";
+        _registernicknameInputField.text = "";
     }
 
     void LoginUIActivate(bool set)
