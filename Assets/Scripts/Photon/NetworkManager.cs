@@ -12,10 +12,10 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     public byte maxPlayers = 4; //최적화에 도움이 되는 데이터 형식이 아닐까
 
-    public Action<List<RoomInfo>> OnRoomListUpdateAction; // 방 목록 갱신 이벤트
-    public Action OnPlayerListUpdateAction; //플레이어 목록 갱신 이벤트
-    public Action OnJoinRoomSuccessAction;
-    public Action OnPlayerPropertiesUpdateAction;
+    public event Action<List<RoomInfo>> OnRoomListUpdateAction; // 방 목록 갱신 이벤트
+    public event Action OnPlayerListUpdateAction; //플레이어 목록 갱신 이벤트
+    public event Action OnJoinRoomSuccessAction;
+    public event Action OnPlayerPropertiesUpdateAction;
 
     private void Awake()
     {
@@ -85,9 +85,14 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     {
         Debug.Log($"5. 방 참가 성공 : {PhotonNetwork.CurrentRoom.Name}");
 
-        AssignMySeatNumber();
-
         OnJoinRoomSuccessAction?.Invoke();
+
+        if (PhotonNetwork.IsMasterClient)
+        {
+            Hashtable props = new Hashtable() { { "SeatNum", 0}};
+            PhotonNetwork.LocalPlayer.SetCustomProperties(props);
+        }
+
         OnPlayerListUpdateAction?.Invoke();
     }
 
@@ -106,6 +111,11 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     {
         Debug.Log($"{newPlayer.NickName} 입장");
         OnPlayerListUpdateAction?.Invoke();
+
+        if (PhotonNetwork.IsMasterClient)
+        {
+            AssignSeatToNewPlayer(newPlayer);
+        }
     }
 
     public override void OnPlayerLeftRoom(Player otherPlayer)
@@ -142,37 +152,31 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         }
     }
 
-    void AssignMySeatNumber()
+    private void AssignSeatToNewPlayer(Player newPlayer)
     {
         List<int> usedSeats = new List<int>();
         foreach (Player p in PhotonNetwork.PlayerList)
         {
-            if(p.IsLocal) continue;
             if (p.CustomProperties.ContainsKey("SeatNum"))
             {
                 usedSeats.Add((int)p.CustomProperties["SeatNum"]);
-            }
+            }            
         }
 
-        int mySeatIndex = -1;
+        int emptySeat = -1;
         for (int i = 0; i < maxPlayers; i++)
         {
             if (!usedSeats.Contains(i))
             {
-                mySeatIndex = i;
+                emptySeat = i;
                 break;
             }
         }
 
-        if (mySeatIndex != -1)
+        if (emptySeat != -1)
         {
-            Hashtable props = new Hashtable() { { "SeatNum", mySeatIndex } };
-            PhotonNetwork.LocalPlayer.SetCustomProperties(props);
-            Debug.Log($"내 자리 배정됨: {mySeatIndex}번");
-        }
-        else
-        {
-            Debug.LogError("자리가 꽉 찼거나 오류 발생");
+            Hashtable props = new Hashtable() { { "SeatNum", emptySeat } };
+            newPlayer.SetCustomProperties(props); // 타겟 플레이어의 프로퍼티 설정
         }
     }
 
