@@ -76,11 +76,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         PhotonNetwork.JoinRoom(roomName);
     }
 
-    public void JoinRandomRoom()
-    {
-        PhotonNetwork.JoinRandomOrCreateRoom(); // 빠른 참가
-    }
-
     public override void OnJoinedRoom()
     {
         Debug.Log($"5. 방 참가 성공 : {PhotonNetwork.CurrentRoom.Name}");
@@ -89,7 +84,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
         if (PhotonNetwork.IsMasterClient)
         {
-            Hashtable props = new Hashtable() { { "SeatNum", 0}};
+            Hashtable props = new Hashtable() { { "SeatNum", 0 }};
             PhotonNetwork.LocalPlayer.SetCustomProperties(props);
         }
 

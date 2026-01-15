@@ -8,21 +8,22 @@ using UnityEngine.UI;
 public class LobbyUI : MonoBehaviour
 {
     [Header("Panels")]
-    public GameObject lobbyPanel;
-    public GameObject roomPanel;
+    private GameObject lobbyPanel;
+    private GameObject roomPanel;
 
     [Header("Lobby Inputs")]
-    public TMP_InputField roomNameInput;
-    public Button createRoomBtn;
-    public Transform roomListContent;
-    public GameObject roomItemPrefab;
+    private TMP_InputField roomNameInput;
+    private Button createRoomBtn;
+    private Transform roomListContent;
+    private GameObject roomItemPrefab;
+    private Dictionary<string, RoomInfo> cachedRoomList = new Dictionary<string, RoomInfo>(); // 방 목록 갱신을 위한 딕셔너리
 
     [Header("Room Info")]
-    public TextMeshProUGUI roomTitleText;
-    public TextMeshProUGUI playerListText; // 접속자 목록 표시용 텍스트
-    public TextMeshProUGUI[] relativeSeatTexts; 
-    public Button startGameBtn;
-    public Button leaveRoomBtn;
+    private TextMeshProUGUI roomTitleText;
+    private TextMeshProUGUI playerListText; // 접속자 목록 표시용 텍스트
+    private TextMeshProUGUI[] relativeSeatTexts; 
+    private Button startGameBtn;
+    private Button leaveRoomBtn;
 
     private void Start()
     {
@@ -64,32 +65,37 @@ public class LobbyUI : MonoBehaviour
         NetworkManager.Instance.CreateRoom(roomName);
     }
 
-    private void OnClickQuickJoinRoom() //TODO 빠른 참가 버튼과 연결할 예정 
-    {
-        NetworkManager.Instance.JoinRandomRoom();
-    }
-
     private void UpdateRoomList(List<RoomInfo> roomList)
     {
+        foreach (RoomInfo info in roomList)
+        {
+            if (info.RemovedFromList)
+            {
+                if (cachedRoomList.ContainsKey(info.Name))
+                    cachedRoomList.Remove(info.Name);
+            }
+            else
+            {
+                cachedRoomList[info.Name] = info;
+            }
+        }
+
         foreach (Transform child in roomListContent)
         {
             Destroy(child.gameObject);
         }
 
-        foreach(RoomInfo info in roomList)
+        foreach (var roomInfo in cachedRoomList.Values)
         {
-            if(info.RemovedFromList) continue;
-
             GameObject entry = Instantiate(roomItemPrefab, roomListContent);
 
-            TextMeshProUGUI txt = entry.GetComponentInChildren<TextMeshProUGUI>();
-            if(txt) txt.text = $"{info.Name} ({info.PlayerCount}/{info.MaxPlayers})";
+            TextMeshProUGUI roomText = entry.GetComponentInChildren<TextMeshProUGUI>();
+            if(roomText) roomText.text = $"{roomInfo.Name} ({roomInfo.PlayerCount}/{roomInfo.MaxPlayers})";
 
-            // 클릭 시 해당 방 참가
             Button btn = entry.GetComponent<Button>();
             if (btn)
             {
-                string roomName = info.Name;
+                string roomName = roomInfo.Name;
                 btn.onClick.AddListener(() => NetworkManager.Instance.JoinRoom(roomName));
             }
         }
