@@ -8,22 +8,22 @@ using UnityEngine.UI;
 public class LobbyUI : MonoBehaviour
 {
     [Header("Panels")]
-    private GameObject lobbyPanel;
-    private GameObject roomPanel;
+    [SerializeField] private GameObject lobbyPanel;
+    [SerializeField] private GameObject roomPanel;
 
     [Header("Lobby Inputs")]
-    private TMP_InputField roomNameInput;
-    private Button createRoomBtn;
-    private Transform roomListContent;
-    private GameObject roomItemPrefab;
-    private Dictionary<string, RoomInfo> cachedRoomList = new Dictionary<string, RoomInfo>(); // 방 목록 갱신을 위한 딕셔너리
+    [SerializeField] private TMP_InputField roomNameInput;
+    [SerializeField] private Button createRoomBtn;
+    [SerializeField] private Transform roomListContent;
+    [SerializeField] private GameObject roomItemPrefab;
+    [SerializeField] private Dictionary<string, RoomInfo> cachedRoomList = new Dictionary<string, RoomInfo>(); // 방 목록 갱신을 위한 딕셔너리
 
     [Header("Room Info")]
-    private TextMeshProUGUI roomTitleText;
-    private TextMeshProUGUI playerListText; // 접속자 목록 표시용 텍스트
-    private TextMeshProUGUI[] relativeSeatTexts; 
-    private Button startGameBtn;
-    private Button leaveRoomBtn;
+    [SerializeField] private TextMeshProUGUI roomTitleText;
+    [SerializeField] private TextMeshProUGUI playerListText; // 접속자 목록 표시용 텍스트
+    [SerializeField] private TextMeshProUGUI[] relativeSeatTexts; 
+    [SerializeField] private Button startGameBtn;
+    [SerializeField] private Button leaveRoomBtn;
 
     private void Start()
     {
