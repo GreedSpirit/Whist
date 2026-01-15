@@ -1695,6 +1695,7 @@ GameObject:
   - component: {fileID: 537033443}
   - component: {fileID: 537033442}
   - component: {fileID: 537033441}
+  - component: {fileID: 537033444}
   m_Layer: 5
   m_Name: RegisterNickInputField
   m_TagString: Untagged
@@ -1861,6 +1862,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 537033439}
   m_CullTransparentMesh: 1
+--- !u!114 &537033444
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 537033439}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5a2b2ffa09c1bc4cb22b6667c9021e8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::IFNavi
+  PrevInputField: {fileID: 681395400}
+  NextInputField: {fileID: 1002195819}
+  EventButton: {fileID: 392201377}
 --- !u!1 &591930228
 GameObject:
   m_ObjectHideFlags: 0
@@ -2154,6 +2170,7 @@ GameObject:
   - component: {fileID: 681395402}
   - component: {fileID: 681395401}
   - component: {fileID: 681395400}
+  - component: {fileID: 681395403}
   m_Layer: 5
   m_Name: RegisterPWInputField
   m_TagString: Untagged
@@ -2320,6 +2337,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 681395398}
   m_CullTransparentMesh: 1
+--- !u!114 &681395403
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 681395398}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5a2b2ffa09c1bc4cb22b6667c9021e8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::IFNavi
+  PrevInputField: {fileID: 1002195819}
+  NextInputField: {fileID: 537033441}
+  EventButton: {fileID: 0}
 --- !u!1 &718014170
 GameObject:
   m_ObjectHideFlags: 0
@@ -2909,6 +2941,7 @@ GameObject:
   - component: {fileID: 1002195821}
   - component: {fileID: 1002195820}
   - component: {fileID: 1002195819}
+  - component: {fileID: 1002195822}
   m_Layer: 5
   m_Name: RegisterEmailInputField
   m_TagString: Untagged
@@ -3075,6 +3108,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1002195817}
   m_CullTransparentMesh: 1
+--- !u!114 &1002195822
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1002195817}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5a2b2ffa09c1bc4cb22b6667c9021e8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::IFNavi
+  PrevInputField: {fileID: 537033441}
+  NextInputField: {fileID: 681395400}
+  EventButton: {fileID: 0}
 --- !u!1 &1014129326
 GameObject:
   m_ObjectHideFlags: 0
@@ -3863,6 +3911,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1450200675}
   - component: {fileID: 1450200678}
+  - component: {fileID: 1450200679}
   - component: {fileID: 1450200677}
   - component: {fileID: 1450200676}
   m_Layer: 5
@@ -3908,7 +3957,7 @@ MonoBehaviour:
     m_Mode: 3
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
+    m_SelectOnDown: {fileID: 1510972407}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
@@ -4031,6 +4080,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1450200674}
   m_CullTransparentMesh: 1
+--- !u!114 &1450200679
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1450200674}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5a2b2ffa09c1bc4cb22b6667c9021e8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::IFNavi
+  PrevInputField: {fileID: 1510972407}
+  NextInputField: {fileID: 1510972407}
+  EventButton: {fileID: 0}
 --- !u!1 &1510972405
 GameObject:
   m_ObjectHideFlags: 0
@@ -4041,6 +4105,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1510972406}
   - component: {fileID: 1510972409}
+  - component: {fileID: 1510972410}
   - component: {fileID: 1510972408}
   - component: {fileID: 1510972407}
   m_Layer: 5
@@ -4118,8 +4183,8 @@ MonoBehaviour:
   m_VerticalScrollbarEventHandler: {fileID: 0}
   m_LayoutGroup: {fileID: 0}
   m_ScrollSensitivity: 1
-  m_ContentType: 0
-  m_InputType: 0
+  m_ContentType: 7
+  m_InputType: 2
   m_AsteriskChar: 42
   m_KeyboardType: 0
   m_LineType: 0
@@ -4209,6 +4274,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1510972405}
   m_CullTransparentMesh: 1
+--- !u!114 &1510972410
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1510972405}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5a2b2ffa09c1bc4cb22b6667c9021e8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::IFNavi
+  PrevInputField: {fileID: 1450200676}
+  NextInputField: {fileID: 1450200676}
+  EventButton: {fileID: 591930230}
 --- !u!1 &1552088027
 GameObject:
   m_ObjectHideFlags: 0
@@ -4345,6 +4425,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1552088027}
   m_CullTransparentMesh: 1
+--- !u!1 &1743929659
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1743929661}
+  - component: {fileID: 1743929660}
+  m_Layer: 0
+  m_Name: TabNaviManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1743929660
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1743929659}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f94a762edaa5824686a0b8810358cb2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TabNaviManager
+--- !u!4 &1743929661
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1743929659}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1760156336
 GameObject:
   m_ObjectHideFlags: 0
@@ -5488,3 +5612,4 @@ SceneRoots:
   - {fileID: 145745609}
   - {fileID: 1430737502}
   - {fileID: 917210766}
+  - {fileID: 1743929661}
