@@ -11,6 +11,7 @@
 /[Ll]ogs/
 /[Uu]ser[Ss]ettings/
 *.log
+google-services.json
 
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
@@ -74,14 +75,17 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
+google-services.json
+
 
 # Ignore custom ignored assets
 /Assets/_IgnoredAssets/**
 !/Assets/_IgnoredAssets/**/
 !/Assets/_IgnoredAssets/**/*.meta
 
-/Assets/Firebase/Plugins/x86_64/FirebaseCppApp-13_6_0.bundle
-/Assets/Firebase/Plugins/x86_64/FirebaseCppApp-13_6_0.so
+/Assets/Firebase/*
+/Assets/StreamingAssets/*
+
 
 /Assets/Fonts/*
 !/Assets/Fonts/*.meta
