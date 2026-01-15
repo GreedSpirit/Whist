@@ -102,13 +102,13 @@ public class LobbyUI : MonoBehaviour
     }
 
 
-    void ShowLobbyPanel()
+    private void ShowLobbyPanel()
     {
         lobbyPanel.SetActive(true);
         roomPanel.SetActive(false);
     }
 
-    void ShowRoomPanel()
+    private void ShowRoomPanel()
     {
         lobbyPanel.SetActive(false);
         roomPanel.SetActive(true);
@@ -171,12 +171,12 @@ public class LobbyUI : MonoBehaviour
         // startGameBtn.interactable = PhotonNetwork.CurrentRoom.PlayerCount == 4; 
     }
 
-    void OnClickStartGame()
+    private void OnClickStartGame()
     {
         NetworkManager.Instance.StartGame();
     }
 
-    void OnClickLeaveRoom()
+    private void OnClickLeaveRoom()
     {
         NetworkManager.Instance.LeaveRoom();
         ShowLobbyPanel();

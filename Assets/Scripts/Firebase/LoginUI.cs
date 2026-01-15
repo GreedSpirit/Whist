@@ -49,7 +49,7 @@ public class LoginUI : MonoBehaviour
         
     }
 
-    void LoginClick()
+    private void LoginClick()
     {
         string email = _emailIDInputField.text;
         string password = _passwordInputField.text;
@@ -63,7 +63,7 @@ public class LoginUI : MonoBehaviour
         AuthManager.Instance.Login(email, password);
     }
 
-    void RegisterClick()
+    private void RegisterClick()
     {
         string email = _registerEmailIDInputField.text;
         string password = _registerPasswordInputField.text;
@@ -78,7 +78,7 @@ public class LoginUI : MonoBehaviour
         AuthManager.Instance.Register(email, password, nickname);
     }
 
-    void RegisterPanelActivate(bool set)
+    private void RegisterPanelActivate(bool set)
     {
         LoginUIActivate(!set);
 
@@ -98,7 +98,7 @@ public class LoginUI : MonoBehaviour
         _registernicknameInputField.text = "";
     }
 
-    void LoginUIActivate(bool set)
+    private void LoginUIActivate(bool set)
     {
         _emailIDInputField.gameObject.SetActive(set);
         _passwordInputField.gameObject.SetActive(set);
@@ -106,7 +106,7 @@ public class LoginUI : MonoBehaviour
         _registerPanelButton.gameObject.SetActive(set);
     }
 
-    void EnterPanelActivate(bool set)
+    private void EnterPanelActivate(bool set)
     {
         LoginUIActivate(!set);
 
