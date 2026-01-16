@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using NUnit.Framework.Constraints;
 using Photon.Pun;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -44,6 +45,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         yield return new WaitForSeconds(2.0f);
 
         //여기서 덱 만들고 섞기
+        fieldCards = CreateShuffledDeck();
 
         //여기서 게임 시작 로직 RPC로 호출
         photonView.RPC(nameof(RPC_StartGame), RpcTarget.All, 0);
@@ -82,5 +84,93 @@ public class GameManager : MonoBehaviourPunCallbacks
 
         // TODO UI 갱신 (누구 턴인지, 테이블의 카드 지우기)
         Debug.Log("Turn Changed : " + nextSeat);
+    }
+
+    [PunRPC]
+    private void RPC_PlayCard(int seatNum, int cardId)
+    {
+        fieldCards[seatNum] = cardId;
+        cardsPlayedCount++;
+
+        if(cardsPlayedCount == 1) // 첫번째 낸 카드가 으뜸 카드 문양
+        {
+            currentLeadSuit = (CardSuit)(cardId / 13);
+        }
+
+        //Todo 추후 UI 연출로 중앙에 카드가 가도록 혹은 낸 사람의 앞으로
+        // UIManager.Instance.AnimateCardPlay(seatNum, cardId);
+
+        // 마스터 클라이언트가 턴 종료 여부 판단
+        if (PhotonNetwork.IsMasterClient)
+        {
+            if (cardsPlayedCount == 4)
+            {
+                StartCoroutine(ProcessTurnResult());
+            }
+            else
+            {
+                // 다음 사람 턴 (0 -> 1 -> 2 -> 3 -> 0)
+                int nextTurn = (seatNum + 1) % 4;
+                photonView.RPC("RPC_NextPlayer", RpcTarget.All, nextTurn);
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+    // RPC Method 종료 ----------------------------------------------------------------
+
+    private IEnumerator ProcessTurnResult()
+    {
+        yield return new WaitForSeconds(2.0f); // 연출 및 동기화 시간 확보
+
+        int winnerSeat = CalculateWinner();
+
+    }
+
+    private int CalculateWinner()
+    {
+        int winner = -1;
+        int maxRank = -1;
+
+        for(int i = 0; i < 4; i++)
+        {
+            int cardId = fieldCards[i];
+            CardSuit suit = (CardSuit)(cardId / 13);
+            int rank = cardId % 13; // A = 12, 2 = 0;
+
+            if(suit == currentLeadSuit)
+            {
+                if(rank > maxRank)
+                {
+                    maxRank = rank;
+                    winner = i;
+                }
+            }
+        }
+
+        return winner;
+    }
+
+    private int[] CreateShuffledDeck()
+    {
+        int[] deck = new int[52];
+        for (int i = 0; i < 52; i++) deck[i] = i;
+        
+        for (int i = 0; i < deck.Length; i++)
+        {
+            int randomRank = UnityEngine.Random.Range(0, deck.Length);
+            int temp = deck[i];
+            deck[i] = deck[randomRank];
+            deck[randomRank] = temp;
+        }
+        return deck;
     }
 }
