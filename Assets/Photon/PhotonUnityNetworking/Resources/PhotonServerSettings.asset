@@ -42,6 +42,8 @@ MonoBehaviour:
   - RPC_StartGame
   - RPC_ChangeTurn
   - RPC_PlayCard
+  - RPC_GameSet
+  - RPC_TrickEnd
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0
