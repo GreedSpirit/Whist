@@ -12,15 +12,14 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
     public int cardId;
     public bool isMine = false;
     public Transform visualTransform;
-
+    private Canvas cardCanvas;
     private bool isInteractable = true;
     private Vector3 originalScale;
-
-
 
     void Awake()
     {
         originalScale = visualTransform.localScale;
+        cardCanvas = GetComponent<Canvas>();
     }
 
     public void Setup(int id, Sprite faceSprite, bool isMyCard)
@@ -53,12 +52,23 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
         if(!isMine || !isInteractable) return;
 
         visualTransform.DOScale(originalScale * 1.2f, 0.2f).SetEase(Ease.OutBack);
+
+        if (cardCanvas != null)
+        {
+        cardCanvas.overrideSorting = true;
+        cardCanvas.sortingOrder = 10;
+        }
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
         if (!isMine) return;
 
-        visualTransform.DOScale(originalScale, 0.2f);        
+        visualTransform.DOScale(originalScale, 0.2f);     
+        if (cardCanvas != null)
+        {
+        cardCanvas.overrideSorting = false;
+        cardCanvas.sortingOrder = 0;
+        }   
     }
 }

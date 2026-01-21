@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Photon.Pun;
+using Photon.Realtime;
 using UnityEngine;
 
 public enum CardSuit { Spade, Diamond, Heart, club }
@@ -73,6 +74,18 @@ public class GameManager : MonoBehaviourPunCallbacks
         currentTrickNumber = 1;
         teamTricks[0] = 0;
         teamTricks[1] = 0;
+        string[] playerNames = new string[4];
+        foreach(Player p in PhotonNetwork.PlayerList)
+        {
+            if (p.CustomProperties.ContainsKey("SeatNum"))
+            {
+                int seat = (int)p.CustomProperties["SeatNum"];
+                if(seat >= 0 && seat < 4)
+                {
+                    playerNames[seat] = p.NickName;
+                }
+            }
+        }
 
         Debug.Log($"1. 게임 시작. 으뜸 문양 -> {currentTrumpSuit}");
 
@@ -84,6 +97,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
 
         UIManager.Instance.UpdateHandUI(myHand);
+        UIManager.Instance.SetupGameInfo((CardSuit)trumpVal, playerNames[0], playerNames[1], playerNames[2], playerNames[3]);
 
         if (PhotonNetwork.IsMasterClient)
         {
@@ -107,6 +121,7 @@ public class GameManager : MonoBehaviourPunCallbacks
                 fieldCards[i] = -1;
             }
             UIManager.Instance.CleanTable();
+            UIManager.Instance.ResetLeadSuit();
         }
 
         UIManager.Instance.UpdateTurnText(nextSeat);
@@ -128,6 +143,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         if (isFirstCardOfTrick)
         {
             currentLeadSuit = GetSuit(cardId);
+            UIManager.Instance.UpdateLeadSuit(currentLeadSuit);
             isFirstCardOfTrick = false;
         }
 
@@ -153,6 +169,9 @@ public class GameManager : MonoBehaviourPunCallbacks
     void RPC_TrickEnd(int winnerSeat, int winningTeam)
     {
         teamTricks[winningTeam]++;
+
+        UIManager.Instance.UpdateScoreUI(teamTricks[0], teamTricks[1]);
+
         Debug.Log($"트릭 승자: Player {winnerSeat} (Team {winningTeam})");
 
         //todo 필수 스코어 보드 갱신 (가능하면 승자 한테 우승하게 해준 카드 혹은 전체 필드 카드 모이기)

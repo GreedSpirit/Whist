@@ -18,9 +18,15 @@ public class UIManager : MonoBehaviour
 
     [Header("UI")]
     public TextMeshProUGUI turnInfoText;
+    public TextMeshProUGUI trumpSuitText;
+    public TextMeshProUGUI leadSuitText;
+    public TextMeshProUGUI team0InfoText; // "Nick1 & Nick2 : 0"
+    public TextMeshProUGUI team1InfoText; // "Nick3 & Nick4 : 0"
     public GameObject resultPanel;
     public TextMeshProUGUI resultText;
 
+    private string team0Names;
+    private string team1Names;
     private List<GameObject> myHandObjects = new List<GameObject>();
 
     void Awake()
@@ -114,5 +120,47 @@ public class UIManager : MonoBehaviour
             resultPanel.SetActive(true);
             if (resultText != null) resultText.text = msg;
         }
+    }
+
+    public void SetupGameInfo(CardSuit trumpSuit, string p0Name, string p1Name, string p2Name, string p3Name)
+    {
+        trumpSuitText.text = SetSuit(trumpSuit);
+        leadSuitText.text = "?";
+
+        team0Names = $"{p0Name} & {p2Name}";
+        team1Names = $"{p1Name} & {p3Name}";
+        
+        UpdateScoreUI(0, 0);
+    }
+
+    private string SetSuit(CardSuit suit)
+    {
+        switch (suit)
+        {
+            case CardSuit.Spade:
+                return "♠";
+            case CardSuit.Heart:
+                return "♥";
+            case CardSuit.Diamond:
+                return "♦";
+            default:
+                return "♣";
+        }
+    }
+
+    public void UpdateLeadSuit(CardSuit leadSuit)
+    {
+        leadSuitText.text = SetSuit(leadSuit);
+    }
+
+    public void ResetLeadSuit()
+    {
+        leadSuitText.text = "?";
+    }
+
+    public void UpdateScoreUI(int score0, int score1)
+    {
+        team0InfoText.text = $"<color=cyan>[Team 0]</color>\n{team0Names}\n<b>{score0} Wins</b>";
+        team1InfoText.text = $"<color=orange>[Team 1]</color>\n{team1Names}\n<b>{score1} Wins</b>";
     }
 }
