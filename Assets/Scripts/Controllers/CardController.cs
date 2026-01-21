@@ -11,14 +11,16 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
 
     public int cardId;
     public bool isMine = false;
-
+    public Transform visualTransform;
 
     private bool isInteractable = true;
     private Vector3 originalScale;
 
+
+
     void Awake()
     {
-        originalScale = transform.localScale;
+        originalScale = visualTransform.localScale;
     }
 
     public void Setup(int id, Sprite faceSprite, bool isMyCard)
@@ -50,16 +52,13 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
     {
         if(!isMine || !isInteractable) return;
 
-        //DOTween으로 0.2초 동안 1.2배 커지는 코드
-        transform.DOScale(originalScale * 1.2f, 0.2f).SetEase(Ease.OutBack);
-
-        transform.SetAsLastSibling(); // z축 정렬을 앞으로 당겨서 다른 카드에 가려지지 않게 하기(만약 layoutgroup 쓰면 안됨 저번 프로젝트에서 배운대로)
+        visualTransform.DOScale(originalScale * 1.2f, 0.2f).SetEase(Ease.OutBack);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
         if (!isMine) return;
 
-        transform.DOScale(originalScale, 0.2f);
+        visualTransform.DOScale(originalScale, 0.2f);        
     }
 }

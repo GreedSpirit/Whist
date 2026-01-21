@@ -1,9 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using NUnit.Framework.Constraints;
 using Photon.Pun;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public enum CardSuit { Spade, Diamond, Heart, club }
@@ -85,8 +83,7 @@ public class GameManager : MonoBehaviourPunCallbacks
             myHand.Add(shuffledDeck[startIndex + i]);
         }
 
-        //TODO : UI상에 카드 생성과 정렬 로직 호출
-        // UIManager.Instance.SpawnCards(myHand);
+        UIManager.Instance.UpdateHandUI(myHand);
 
         if (PhotonNetwork.IsMasterClient)
         {
@@ -109,9 +106,10 @@ public class GameManager : MonoBehaviourPunCallbacks
             {
                 fieldCards[i] = -1;
             }
+            UIManager.Instance.CleanTable();
         }
 
-        // TODO UI 갱신 (누구 턴인지, 테이블의 카드 지우기)
+        UIManager.Instance.UpdateTurnText(nextSeat);
         Debug.Log("Turn Changed : " + nextSeat);
     }
 
@@ -133,8 +131,7 @@ public class GameManager : MonoBehaviourPunCallbacks
             isFirstCardOfTrick = false;
         }
 
-        //Todo 추후 UI 연출로 중앙에 카드가 가도록 혹은 낸 사람의 앞으로
-        // UIManager.Instance.AnimateCardPlay(seatNum, cardId);
+        UIManager.Instance.ShowCardOnTable(seatNum, cardId);
 
         // 마스터 클라이언트가 턴 종료 여부 판단
         if (PhotonNetwork.IsMasterClient)
@@ -167,7 +164,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         currentState = GameState.Result;
         Debug.Log($"게임 종료 : {msg}, {score0} : {score1}");
 
-        //todo UI 결과창 띄우기
+        UIManager.Instance.ShowResultPanel(msg);
     }
 
     // RPC Method 종료 ----------------------------------------------------------------
@@ -295,7 +292,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         else resultMsg = "무승부";
 
         // 결과 RPC 전송
-        photonView.RPC("RPC_GameSet", RpcTarget.All, scoreTeam0, scoreTeam1, resultMsg);
+        photonView.RPC(nameof(RPC_GameSet), RpcTarget.All, scoreTeam0, scoreTeam1, resultMsg);
 
         // TODO: DB 저장 (방장만 대표로 저장 or 각자 자신의 승 패만 저장)
         if(PhotonNetwork.IsMasterClient)
