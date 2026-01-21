@@ -124,8 +124,8 @@ public class UIManager : MonoBehaviour
 
     public void SetupGameInfo(CardSuit trumpSuit, string p0Name, string p1Name, string p2Name, string p3Name)
     {
-        trumpSuitText.text = SetSuit(trumpSuit);
-        leadSuitText.text = "?";
+        trumpSuitText.text = "Trump Suit : " + SetSuit(trumpSuit);
+        leadSuitText.text = "Lead Suit : ?";
 
         team0Names = $"{p0Name} & {p2Name}";
         team1Names = $"{p1Name} & {p3Name}";
@@ -150,17 +150,17 @@ public class UIManager : MonoBehaviour
 
     public void UpdateLeadSuit(CardSuit leadSuit)
     {
-        leadSuitText.text = SetSuit(leadSuit);
+        leadSuitText.text = "Lead Suit : " + SetSuit(leadSuit);
     }
 
     public void ResetLeadSuit()
     {
-        leadSuitText.text = "?";
+        leadSuitText.text = "Lead Suit : ?";
     }
 
     public void UpdateScoreUI(int score0, int score1)
     {
-        team0InfoText.text = $"<color=cyan>[Team 0]</color>\n{team0Names}\n<b>{score0} Wins</b>";
-        team1InfoText.text = $"<color=orange>[Team 1]</color>\n{team1Names}\n<b>{score1} Wins</b>";
+        team0InfoText.text = $"<color=green>[Team 0]</color>\n {team0Names} : <b>{score0} Wins</b>";
+        team1InfoText.text = $"<color=orange>[Team 1]</color>\n {team1Names} : <b>{score1} Wins</b>";
     }
 }
