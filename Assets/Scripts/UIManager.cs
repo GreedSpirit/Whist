@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
@@ -24,6 +25,7 @@ public class UIManager : MonoBehaviour
     public TextMeshProUGUI team1InfoText; // "Nick3 & Nick4 : 0"
     public GameObject resultPanel;
     public TextMeshProUGUI resultText;
+    public Button backToLobbyBtn;
 
     private string team0Names;
     private string team1Names;
@@ -32,6 +34,11 @@ public class UIManager : MonoBehaviour
     void Awake()
     {
         Instance = this;
+    }
+
+    void Start()
+    {
+        backToLobbyBtn.onClick.AddListener(OnClickBackToLobby);
     }
 
     // 손패 만들기
@@ -162,5 +169,12 @@ public class UIManager : MonoBehaviour
     {
         team0InfoText.text = $"<color=green>[Team 0]</color>\n {team0Names} : <b>{score0} Wins</b>";
         team1InfoText.text = $"<color=orange>[Team 1]</color>\n {team1Names} : <b>{score1} Wins</b>";
+    }
+
+    private void OnClickBackToLobby()
+    {
+        backToLobbyBtn.interactable = false;
+
+        NetworkManager.Instance.LeaveRoom();
     }
 }

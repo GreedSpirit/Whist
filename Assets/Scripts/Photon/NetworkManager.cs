@@ -175,4 +175,17 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         }
     }
 
+    public void LeaveRopom()
+    {
+        Debug.Log("방 나가기 시도");
+        PhotonNetwork.LeaveRoom();
+    }
+
+    public override void OnLeftRoom()
+    {
+        Debug.Log("성공적으로 방 나가기 완료");
+        
+        UnityEngine.SceneManagement.SceneManager.LoadScene("LobbyScene");
+    }
+
 }
