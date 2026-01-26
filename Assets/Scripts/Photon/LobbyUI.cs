@@ -15,6 +15,7 @@ public class LobbyUI : MonoBehaviour
     [Header("Lobby Inputs")]
     [SerializeField] private TMP_InputField roomNameInput;
     [SerializeField] private Button createRoomBtn;
+    [SerializeField] private Button gameExitButton;
     [SerializeField] private Transform roomListContent;
     [SerializeField] private GameObject roomItemPrefab;
     [SerializeField] private Dictionary<string, RoomInfo> cachedRoomList = new Dictionary<string, RoomInfo>(); // 방 목록 갱신을 위한 딕셔너리
@@ -38,6 +39,7 @@ public class LobbyUI : MonoBehaviour
         createRoomBtn.onClick.AddListener(OnClickCreateRoom);
         startGameBtn.onClick.AddListener(OnClickStartGame);
         leaveRoomBtn.onClick.AddListener(OnClickLeaveRoom);
+        gameExitButton.onClick.AddListener(ExitGame);
 
         NetworkManager.Instance.OnRoomListUpdateAction += UpdateRoomList;
         NetworkManager.Instance.OnJoinRoomSuccessAction += ShowRoomPanel;
@@ -219,6 +221,15 @@ public class LobbyUI : MonoBehaviour
 
             item.Setup(i + 1, allUsers[i].Nickname, allUsers[i].Wins, allUsers[i].Loses);
         }
+    }
+
+    private void ExitGame()
+    {
+        #if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+        #else
+        Application.Quit();
+        #endif
     }
 
 
