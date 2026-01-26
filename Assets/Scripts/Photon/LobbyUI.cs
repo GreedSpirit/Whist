@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Photon.Pun;
 using Photon.Realtime;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -25,6 +26,13 @@ public class LobbyUI : MonoBehaviour
     [SerializeField] private Button startGameBtn;
     [SerializeField] private Button leaveRoomBtn;
 
+    [Header("Ranking UI")]
+    public GameObject rankingPanel;
+    public Transform rankingContent;
+    public GameObject rankingItemPrefab;
+    public Button openRankingBtn;
+    public Button closeRankingBtn;
+
     private void Start()
     {
         createRoomBtn.onClick.AddListener(OnClickCreateRoom);
@@ -36,6 +44,9 @@ public class LobbyUI : MonoBehaviour
 
         NetworkManager.Instance.OnPlayerListUpdateAction += UpdateRoomUI; // 입장/ 퇴장
         NetworkManager.Instance.OnPlayerPropertiesUpdateAction += UpdateRoomUI; // 자리 변경
+
+        openRankingBtn.onClick.AddListener(OnClickOpenRanking);
+        closeRankingBtn.onClick.AddListener(() => rankingPanel.SetActive(false));
 
         ShowLobbyPanel();
     }
@@ -181,4 +192,34 @@ public class LobbyUI : MonoBehaviour
         NetworkManager.Instance.LeaveRoom();
         ShowLobbyPanel();
     }
+
+    void OnClickOpenRanking()
+    {
+        rankingPanel.SetActive(true);
+        foreach (Transform child in rankingContent) Destroy(child.gameObject);
+
+        AuthManager.Instance.FetchAllUsers(OnRankingDataLoaded);
+    }
+
+    void OnRankingDataLoaded(List<User> allUsers)
+    {
+        allUsers.Sort((a, b) => 
+        {
+            float rateA = (a.Wins + a.Loses == 0) ? 0 : (float)a.Wins / (a.Wins + a.Loses);
+            float rateB = (b.Wins + b.Loses == 0) ? 0 : (float)b.Wins / (b.Wins + b.Loses);
+
+            if (rateA != rateB) return rateB.CompareTo(rateA); // 승률 높은 순
+            return b.Wins.CompareTo(a.Wins); // 승률 같으면 승수 높은 순
+        });
+
+        for (int i = 0; i < allUsers.Count; i++)
+        {
+            GameObject itemObj = Instantiate(rankingItemPrefab, rankingContent);
+            Ranking item = itemObj.GetComponent<Ranking>();
+
+            item.Setup(i + 1, allUsers[i].Nickname, allUsers[i].Wins, allUsers[i].Loses);
+        }
+    }
+
+
 }

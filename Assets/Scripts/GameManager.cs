@@ -51,13 +51,11 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     private IEnumerator WaitAndStartGame()
     {
-        //TODO waituntil로 모두의 로딩이 끝나는 것을 기다리게 만들 예정
-        yield return new WaitForSeconds(2.0f);
+        yield return new WaitForSeconds(1.5f);
 
         //여기서 덱 만들고 섞기
         int[] deck = CreateShuffledDeck();
 
-        //Todo 이번 게임의 으뜸 문양 정하기, 마지막 카드로 해도되고 랜덤으로 해도 되고 일단 랜덤
         int trumpVal = UnityEngine.Random.Range(0, 4);
 
         //여기서 게임 시작 로직 RPC로 호출
@@ -101,7 +99,6 @@ public class GameManager : MonoBehaviourPunCallbacks
 
         if (PhotonNetwork.IsMasterClient)
         {
-            //TODO : 0번부터 시작으로 일단 설정, 실제 규칙에서는 뭐였는지 확인 필요
             photonView.RPC(nameof(RPC_ChangeTurn), RpcTarget.All, 0, true);
         }
     }
@@ -137,7 +134,6 @@ public class GameManager : MonoBehaviourPunCallbacks
         if(seatNum == mySeatNum)
         {
             myHand.Remove(cardId);
-            //todo UI도 같이 갱신
         }
 
         if (isFirstCardOfTrick)
@@ -173,8 +169,6 @@ public class GameManager : MonoBehaviourPunCallbacks
         UIManager.Instance.UpdateScoreUI(teamTricks[0], teamTricks[1]);
 
         Debug.Log($"트릭 승자: Player {winnerSeat} (Team {winningTeam})");
-
-        //todo 필수 스코어 보드 갱신 (가능하면 승자 한테 우승하게 해준 카드 혹은 전체 필드 카드 모이기)
     }
 
     [PunRPC]
@@ -313,11 +307,16 @@ public class GameManager : MonoBehaviourPunCallbacks
         // 결과 RPC 전송
         photonView.RPC(nameof(RPC_GameSet), RpcTarget.All, scoreTeam0, scoreTeam1, resultMsg);
 
-        // TODO: DB 저장 (방장만 대표로 저장 or 각자 자신의 승 패만 저장)
-        if(PhotonNetwork.IsMasterClient)
+        int myTeam = (mySeatNum % 2);
+        bool isMyTeamWin = false;
+
+        if (myTeam == 0 && scoreTeam0 > scoreTeam1) isMyTeamWin = true;
+        else if (myTeam == 1 && scoreTeam1 > scoreTeam0) isMyTeamWin = true;
+        
+        if (scoreTeam0 != scoreTeam1)
         {
-             // SaveToFirebase(scoreTeam0, scoreTeam1);
-        } 
+            AuthManager.Instance.UpdatePlayerStats(isMyTeamWin);
+        }
     }
 
     public CardSuit GetSuit(int cardId)

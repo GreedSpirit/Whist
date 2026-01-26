@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Firebase;
 using Firebase.Auth;
@@ -171,6 +172,47 @@ public class AuthManager : Singleton<AuthManager>
                 OnRegisterDone?.Invoke(false);
                 OnLoginDone?.Invoke(true);
             }
+        });
+    }
+
+    public void UpdatePlayerStats(bool isWin)
+    {
+        if(CurrentUser == null) return;
+
+        if(isWin) CurrentUser.Wins++;
+        else CurrentUser.Loses++;
+
+        string json = JsonUtility.ToJson(CurrentUser);
+        _databaseReference.Child("users").Child(_auth.CurrentUser.UserId).SetRawJsonValueAsync(json);
+
+        Debug.Log($"전적 업데이트 : {CurrentUser.Wins}승 {CurrentUser.Loses}패");
+    }
+
+    public void FetchAllUsers(Action<List<User>> onLoaded)
+    {
+        _databaseReference.Child("users").GetValueAsync().ContinueWithOnMainThread(task =>
+        {
+            if (task.IsFaulted || task.IsCanceled)
+            {
+                Debug.LogError("랭킹 데이터 로드 실패");
+                return;
+            }
+
+            List<User> userList = new List<User>();
+            DataSnapshot snapshot = task.Result;
+
+            foreach (DataSnapshot child in snapshot.Children)
+            {
+                string json = child.GetRawJsonValue();
+                if (!string.IsNullOrEmpty(json))
+                {
+                    User user = JsonUtility.FromJson<User>(json);
+                    userList.Add(user);
+                }
+            }
+            
+            // 콜백으로 데이터 전달
+            onLoaded?.Invoke(userList);
         });
     }
 }
