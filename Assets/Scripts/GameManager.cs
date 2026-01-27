@@ -96,7 +96,8 @@ public class GameManager : MonoBehaviourPunCallbacks
 
         UIManager.Instance.UpdateHandUI(myHand);
         UIManager.Instance.SetupGameInfo((CardSuit)trumpVal, playerNames[0], playerNames[1], playerNames[2], playerNames[3]);
-
+        UIManager.Instance.RefreshHandInteractivity();
+        
         if (PhotonNetwork.IsMasterClient)
         {
             photonView.RPC(nameof(RPC_ChangeTurn), RpcTarget.All, 0, true);
@@ -122,6 +123,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
 
         UIManager.Instance.UpdateTurnText(nextSeat);
+        UIManager.Instance.RefreshHandInteractivity();
         Debug.Log("Turn Changed : " + nextSeat);
     }
 
@@ -279,7 +281,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         photonView.RPC(nameof(RPC_PlayCard), RpcTarget.All, mySeatNum, cardId);
     }
 
-    bool IsValidPlay(int cardId)
+    public bool IsValidPlay(int cardId)
     {   
         // 첫턴은 아무거나 괜찮음
         if(isFirstCardOfTrick) return true;

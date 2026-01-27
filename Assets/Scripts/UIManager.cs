@@ -171,6 +171,24 @@ public class UIManager : MonoBehaviour
         team1InfoText.text = $"<color=orange>[Team 1]</color>\n {team1Names} : <b>{score1} Wins</b>";
     }
 
+    public void RefreshHandInteractivity()
+    {
+        if(GameManager.Instance.currentTurnSeat != GameManager.Instance.mySeatNum)
+        {
+            foreach(var obj in myHandObjects)
+            {
+                obj.GetComponent<CardController>().SetPlayableState(false);
+            }
+            return;
+        }
+
+        foreach(var obj in myHandObjects)
+        {
+            CardController card = obj.GetComponent<CardController>();
+            card.SetPlayableState(GameManager.Instance.IsValidPlay(card.cardId));
+        }
+    }
+
     private void OnClickBackToLobby()
     {
         backToLobbyBtn.interactable = false;

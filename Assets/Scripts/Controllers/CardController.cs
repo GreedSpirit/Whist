@@ -1,5 +1,6 @@
 
 using DG.Tweening;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -12,6 +13,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
     public int cardId;
     public bool isMine = false;
     public Transform visualTransform;
+    public GameObject highlightBorder;
     private Canvas cardCanvas;
     private bool isInteractable = true;
     private Vector3 originalScale;
@@ -28,7 +30,6 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
         this.cardImage.sprite = faceSprite;
         this.isMine = isMyCard;
 
-        //todo 내 카드가 아니면 뒷면을 보여주거나 아예 안보여주기
         if (backImage != null) backImage.gameObject.SetActive(!isMyCard);
     }
 
@@ -37,6 +38,21 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
         isInteractable = state;
         
         cardImage.color = state ? Color.white : Color.gray;
+    }
+
+    public void SetPlayableState(bool isPlayable)
+    {
+        if(highlightBorder != null)
+        {
+            highlightBorder.SetActive(isPlayable);
+        }
+
+        if(cardImage != null)
+        {
+            cardImage.color = isPlayable ? Color.white : new Color(0.5f, 0.5f, 0.5f);
+        }
+
+        SetInteractable(isPlayable);
     }
 
 
