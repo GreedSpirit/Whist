@@ -26,6 +26,7 @@ public class UIManager : MonoBehaviour
     public GameObject resultPanel;
     public TextMeshProUGUI resultText;
     public Button backToLobbyBtn;
+    public TextMeshProUGUI notificationText;
 
     private string team0Names;
     private string team1Names;
@@ -117,7 +118,7 @@ public class UIManager : MonoBehaviour
     {
         if (turnInfoText != null)
             turnInfoText.text = (seatNum == GameManager.Instance.mySeatNum) ? 
-                "나의 턴!" : $"Player {seatNum}의 턴";
+                "나의 턴!" : $"{GameManager.Instance.GetPlayerNameBySeat(seatNum)}({seatNum + 1})의 턴";
     }
 
     public void ShowResultPanel(string msg)
@@ -145,13 +146,13 @@ public class UIManager : MonoBehaviour
         switch (suit)
         {
             case CardSuit.Spade:
-                return "♠";
+                return "<color=black>♠</color>";
             case CardSuit.Heart:
-                return "♥";
+                return "<color=red>♥</color>";
             case CardSuit.Diamond:
-                return "♦";
+                return "<color=red>♦</color>";
             default:
-                return "♣";
+                return "<color=black>♣</color>";
         }
     }
 
@@ -187,6 +188,52 @@ public class UIManager : MonoBehaviour
             CardController card = obj.GetComponent<CardController>();
             card.SetPlayableState(GameManager.Instance.IsValidPlay(card.cardId));
         }
+    }
+
+    private void ShowPopupText(string msg, float duration = 2.0f)
+    {
+        // 기존 연출이 있다면 중단하고 초기화
+        notificationText.DOKill();
+        notificationText.transform.DOKill();
+
+        notificationText.text = msg;
+        notificationText.alpha = 0;
+        notificationText.transform.localScale = Vector3.one * 0.5f; // 작아진 상태에서 시작
+        notificationText.gameObject.SetActive(true);
+
+        // DOTween 시퀀스 생성
+        Sequence seq = DOTween.Sequence();
+
+        // 등장
+        seq.Append(notificationText.DOFade(1.0f, 0.3f));
+        seq.Join(notificationText.transform.DOScale(1.2f, 0.3f).SetEase(Ease.OutBack)); // 1.2배로 팡!
+
+        // 대기
+        seq.Append(notificationText.transform.DOScale(1.0f, 0.2f));
+        seq.AppendInterval(duration);
+
+        // 퇴장
+        seq.Append(notificationText.DOFade(0.0f, 0.5f));
+        seq.Join(notificationText.transform.DOLocalMoveY(100f, 0.5f).SetRelative()); // 위로 둥둥
+
+        // 종료 후 원위치
+        seq.OnComplete(() => {
+            notificationText.transform.localPosition = Vector3.zero; // 위치 초기화
+        });
+    }
+
+    // 턴 알림용
+    public void ShowTurnNotification(string nickname)
+    {
+        ShowPopupText($"<color=yellow>{nickname}</color>의 턴!", 1.5f);
+    }
+
+    public void ShowTrickResult(string winnerName, string cardName, int winningTeam)
+    {
+        string teamColor = (winningTeam == 0) ? "green" : "orange";
+        string msg = $"<b>{winnerName}</b> 승리! ({cardName})\n<color={teamColor}>Team {winningTeam} 득점!</color>";
+        
+        ShowPopupText(msg, 4.5f); // 결과는 좀 더 길게 보여줌
     }
 
     private void OnClickBackToLobby()

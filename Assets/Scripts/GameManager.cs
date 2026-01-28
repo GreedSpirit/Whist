@@ -25,6 +25,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     public int currentTrickNumber = 0; // 몇 턴째인지 나타내는 변수
 
     public int[] teamTricks = new int[2];
+    public string[] playerNames = new string[4];
 
     public int mySeatNum;
     public List<int> myHand = new List<int>();
@@ -72,7 +73,6 @@ public class GameManager : MonoBehaviourPunCallbacks
         currentTrickNumber = 1;
         teamTricks[0] = 0;
         teamTricks[1] = 0;
-        string[] playerNames = new string[4];
         foreach(Player p in PhotonNetwork.PlayerList)
         {
             if (p.CustomProperties.ContainsKey("SeatNum"))
@@ -97,7 +97,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         UIManager.Instance.UpdateHandUI(myHand);
         UIManager.Instance.SetupGameInfo((CardSuit)trumpVal, playerNames[0], playerNames[1], playerNames[2], playerNames[3]);
         UIManager.Instance.RefreshHandInteractivity();
-        
+
         if (PhotonNetwork.IsMasterClient)
         {
             photonView.RPC(nameof(RPC_ChangeTurn), RpcTarget.All, 0, true);
@@ -124,7 +124,9 @@ public class GameManager : MonoBehaviourPunCallbacks
 
         UIManager.Instance.UpdateTurnText(nextSeat);
         UIManager.Instance.RefreshHandInteractivity();
+
         Debug.Log("Turn Changed : " + nextSeat);
+        UIManager.Instance.ShowTurnNotification(GetPlayerNameBySeat(nextSeat));
     }
 
     [PunRPC]
@@ -168,6 +170,11 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         teamTricks[winningTeam]++;
 
+        int winningCardId = fieldCards[winnerSeat];
+        string cardName = GetCardName(winningCardId);
+        string winnerName = GetPlayerNameBySeat(winnerSeat);
+
+        UIManager.Instance.ShowTrickResult(winnerName, cardName, winningTeam);
         UIManager.Instance.UpdateScoreUI(teamTricks[0], teamTricks[1]);
 
         Debug.Log($"트릭 승자: Player {winnerSeat} (Team {winningTeam})");
@@ -186,7 +193,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     private IEnumerator ProcessTrickResult()
     {
-        yield return new WaitForSeconds(2.0f); // 연출 및 동기화 시간 확보
+        yield return new WaitForSeconds(1.5f); // 연출 및 동기화 시간 확보
 
         int winnerSeat = CalculateTrickWinner();
         int winningTeam = winnerSeat % 2;
@@ -329,6 +336,23 @@ public class GameManager : MonoBehaviourPunCallbacks
     public int GetRank(int cardId)
     {
         return cardId %13;
+    }
+
+    public string GetPlayerNameBySeat(int seatIndex)
+    {
+        return playerNames[seatIndex];
+    }
+
+    // 카드 이름 문자열로 변환 (예: ♠A)
+    public string GetCardName(int cardId)
+    {
+        string[] suitIcons = { "<color=black>♠</color>", "<color=red>♦</color>", "<color=red>♥</color>", "<color=black>♣</color>" };
+        string[] ranks = { "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A" };
+
+        int suitIdx = (int)GetSuit(cardId);
+        int rankIdx = GetRank(cardId);
+
+        return $"{suitIcons[suitIdx]}{ranks[rankIdx]}";
     }
 
 }
