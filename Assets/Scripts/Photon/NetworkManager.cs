@@ -66,7 +66,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     public void CreateRoom(string roomName)
     {
-        if(string.IsNullOrEmpty(roomName)) return; //TODO 나중에는 경고 팝업?
+        if(string.IsNullOrEmpty(roomName)) return;
 
         PhotonNetwork.CreateRoom(roomName, new RoomOptions { MaxPlayers = 4 });
     }
@@ -142,7 +142,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             else
             {
                 Debug.LogWarning("4명이 모이지 않아 시작할 수 없습니다.");
-                PhotonNetwork.LoadLevel("InGameScene"); //TODO 테스트를 위해서 일단 4명 아니여도 넘어가도록
             }
         }
     }

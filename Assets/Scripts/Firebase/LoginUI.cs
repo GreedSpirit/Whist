@@ -1,3 +1,4 @@
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -30,6 +31,11 @@ public class LoginUI : MonoBehaviour
     [SerializeField] private GameObject _enterPanel;
     [SerializeField] private TextMeshProUGUI _nicknameText;
 
+    [Header("Notification")]
+    [SerializeField] private CanvasGroup _notificationPanel;
+    [SerializeField] private TextMeshProUGUI _notificationText;
+    
+
     private void Start()
     {
         AuthManager.Instance.OnLoginDone += EnterPanelActivate;
@@ -46,6 +52,12 @@ public class LoginUI : MonoBehaviour
 
         _enterButton.onClick.AddListener(EnterClick);
         _returnButton.onClick.AddListener(() => EnterPanelActivate(false));
+
+        if(_notificationPanel != null)
+        {
+            _notificationPanel.alpha = 0;
+            _notificationPanel.gameObject.SetActive(false);
+        }
         
     }
 
@@ -56,11 +68,11 @@ public class LoginUI : MonoBehaviour
 
         if(string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
         {
-            Debug.LogWarning("이메일 혹은 비밀번호가 비어있습니다.");
+            ShowNotification("이메일 혹은 비밀번호가 비어있습니다.");
             return;
         }
 
-        AuthManager.Instance.Login(email, password);
+        AuthManager.Instance.Login(email, password, (msg) => ShowNotification(msg));
     }
 
     private void RegisterClick()
@@ -71,11 +83,11 @@ public class LoginUI : MonoBehaviour
 
         if(string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(nickname))
         {
-            Debug.LogWarning("비어있는 필드가 있습니다");
+            ShowNotification("비어있는 필드가 있습니다");
             return;
         }
 
-        AuthManager.Instance.Register(email, password, nickname);
+        AuthManager.Instance.Register(email, password, nickname, (msg) => ShowNotification(msg));
     }
 
     private void RegisterPanelActivate(bool set)
@@ -126,5 +138,22 @@ public class LoginUI : MonoBehaviour
         #else
         Application.Quit();
         #endif
+    }
+
+    public void ShowNotification(string message)
+    {
+        if (_notificationPanel == null) return;
+
+        _notificationPanel.DOKill();
+        
+        _notificationText.text = message;
+        _notificationPanel.gameObject.SetActive(true);
+        _notificationPanel.alpha = 0;
+
+        Sequence seq = DOTween.Sequence();
+        seq.Append(_notificationPanel.DOFade(1.0f, 0.3f));
+        seq.AppendInterval(1.5f);                      
+        seq.Append(_notificationPanel.DOFade(0.0f, 0.5f));
+        seq.OnComplete(() => _notificationPanel.gameObject.SetActive(false));
     }
 }

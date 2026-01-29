@@ -40,17 +40,17 @@ public class AuthManager : Singleton<AuthManager>
         Debug.Log("1. Firebase 초기화 완료");
     }
 
-    public void Login(string email, string password)
+    public void Login(string email, string password, Action<string> onError)
     {
-        StartCoroutine(LoginCor(email, password));
+        StartCoroutine(LoginCor(email, password, onError));
     }
 
-    public void Register(string email, string password, string nickname)
+    public void Register(string email, string password, string nickname, Action<string> onError)
     {
-        StartCoroutine(RegisterCor(email, password, nickname));
+        StartCoroutine(RegisterCor(email, password, nickname, onError));
     }
 
-    private IEnumerator LoginCor(string email, string password)
+    private IEnumerator LoginCor(string email, string password, Action<string> onError)
     {
         Task<AuthResult> LoginTask = _auth.SignInWithEmailAndPasswordAsync(email, password);
 
@@ -86,7 +86,7 @@ public class AuthManager : Singleton<AuthManager>
                     message = "관리자에게 문의 바랍니다";
                     break;
             }
-            Debug.LogWarning(message);
+            onError?.Invoke(message);
         }
         else
         {
@@ -120,7 +120,7 @@ public class AuthManager : Singleton<AuthManager>
         }
     }
 
-    private IEnumerator RegisterCor(string email, string password, string userName)
+    private IEnumerator RegisterCor(string email, string password, string userName, Action<string> onError)
     {
         Task<AuthResult> RegisterTask = _auth.CreateUserWithEmailAndPasswordAsync(email, password);
         yield return new WaitUntil(predicate: () => RegisterTask.IsCompleted);
@@ -149,7 +149,7 @@ public class AuthManager : Singleton<AuthManager>
                     message = "기타 사유. 관리자 문의 바람";
                     break;
             }
-            Debug.LogWarning(message);
+            onError?.Invoke(message);
         }
         else
         {
