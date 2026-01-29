@@ -294,9 +294,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Team 0
-
-    asdf & asdfasdf : wins 0'
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 28868fab6abafd742a7f5e9617100493, type: 2}
   m_sharedMaterial: {fileID: -8940339883814245800, guid: 28868fab6abafd742a7f5e9617100493, type: 2}
@@ -1711,7 +1709,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Trump Suit : \u2665"
+  m_text: 'Trump Suit : ?'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 55f4e64751827bd4babecc72813786dc, type: 2}
   m_sharedMaterial: {fileID: -1578090204399458532, guid: 55f4e64751827bd4babecc72813786dc, type: 2}
@@ -1991,9 +1989,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Team 0
-
-    asdf & asdfasdf : wins 5'
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 28868fab6abafd742a7f5e9617100493, type: 2}
   m_sharedMaterial: {fileID: -8940339883814245800, guid: 28868fab6abafd742a7f5e9617100493, type: 2}
