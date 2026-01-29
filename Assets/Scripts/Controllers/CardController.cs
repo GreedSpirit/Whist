@@ -87,4 +87,16 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
         cardCanvas.sortingOrder = 0;
         }   
     }
+
+    public void OnMoveToTable()
+    {
+        if(highlightBorder != null) highlightBorder.SetActive(false);
+
+        isInteractable = false;
+
+        if(cardImage != null)
+        {
+            cardImage.color = Color.white;
+        }
+    }
 }

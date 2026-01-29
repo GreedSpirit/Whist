@@ -93,6 +93,7 @@ public class UIManager : MonoBehaviour
 
         if (cardObj != null)
         {
+            cardObj.GetComponent<CardController>().OnMoveToTable();
             Transform targetTransform = tableSlots[seatNum];
             
             cardObj.transform.DOMove(targetTransform.position, 0.5f).SetEase(Ease.OutBack);
