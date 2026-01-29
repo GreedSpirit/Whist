@@ -233,7 +233,13 @@ public class UIManager : MonoBehaviour
         string teamColor = (winningTeam == 0) ? "green" : "orange";
         string msg = $"<b>{winnerName}</b> 승리! ({cardName})\n<color={teamColor}>Team {winningTeam} 득점!</color>";
         
-        ShowPopupText(msg, 4.5f); // 결과는 좀 더 길게 보여줌
+        ShowPopupText(msg, 2.5f); // 결과는 좀 더 길게 보여줌
+    }
+
+    public void LockAllHand()
+    {
+        foreach(var obj in myHandObjects) 
+             obj.GetComponent<CardController>().SetPlayableState(false);
     }
 
     private void OnClickBackToLobby()

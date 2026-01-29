@@ -118,7 +118,6 @@ public class GameManager : MonoBehaviourPunCallbacks
             {
                 fieldCards[i] = -1;
             }
-            UIManager.Instance.CleanTable();
             UIManager.Instance.ResetLeadSuit();
         }
 
@@ -170,6 +169,8 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         teamTricks[winningTeam]++;
 
+        UIManager.Instance.CleanTable();
+
         int winningCardId = fieldCards[winnerSeat];
         string cardName = GetCardName(winningCardId);
         string winnerName = GetPlayerNameBySeat(winnerSeat);
@@ -186,6 +187,17 @@ public class GameManager : MonoBehaviourPunCallbacks
         currentState = GameState.Result;
         Debug.Log($"게임 종료 : {msg}, {score0} : {score1}");
 
+        int myTeam = mySeatNum % 2;
+        bool isMyTeamWin = false;
+
+        if (myTeam == 0 && score0 > score1) isMyTeamWin = true;
+        else if (myTeam == 1 && score1 > score0) isMyTeamWin = true;
+        
+        if (score0 != score1)
+        {
+            AuthManager.Instance.UpdatePlayerStats(isMyTeamWin);
+        }
+
         UIManager.Instance.ShowResultPanel(msg);
     }
 
@@ -193,14 +205,14 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     private IEnumerator ProcessTrickResult()
     {
-        yield return new WaitForSeconds(1.5f); // 연출 및 동기화 시간 확보
+        yield return new WaitForSeconds(1.0f); // 연출 및 동기화 시간 확보
 
         int winnerSeat = CalculateTrickWinner();
         int winningTeam = winnerSeat % 2;
 
         photonView.RPC(nameof(RPC_TrickEnd), RpcTarget.All, winnerSeat, winningTeam);
 
-        yield return new WaitForSeconds(1.0f);
+        yield return new WaitForSeconds(2.5f);
 
         if(currentTrickNumber >= 13)
         {
@@ -285,6 +297,8 @@ public class GameManager : MonoBehaviourPunCallbacks
             return;
         }
 
+        UIManager.Instance.LockAllHand();
+
         photonView.RPC(nameof(RPC_PlayCard), RpcTarget.All, mySeatNum, cardId);
     }
 
@@ -315,17 +329,6 @@ public class GameManager : MonoBehaviourPunCallbacks
 
         // 결과 RPC 전송
         photonView.RPC(nameof(RPC_GameSet), RpcTarget.All, scoreTeam0, scoreTeam1, resultMsg);
-
-        int myTeam = (mySeatNum % 2);
-        bool isMyTeamWin = false;
-
-        if (myTeam == 0 && scoreTeam0 > scoreTeam1) isMyTeamWin = true;
-        else if (myTeam == 1 && scoreTeam1 > scoreTeam0) isMyTeamWin = true;
-        
-        if (scoreTeam0 != scoreTeam1)
-        {
-            AuthManager.Instance.UpdatePlayerStats(isMyTeamWin);
-        }
     }
 
     public CardSuit GetSuit(int cardId)
